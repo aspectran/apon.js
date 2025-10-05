@@ -6,7 +6,7 @@ A lightweight, zero-dependency JavaScript library for handling APON (Aspectran P
 
 This library is designed to bring the readability and convenience of APON to the web environment, making it easy to manage configurations or structured data on the client-side.
 
-**[Live Demo &raquo;](https://aspectran.github.io/apon.js/demo.html)**
+**[Live Demo &raquo;](https://aspectran.github.io/apon.js/)**
 
 ## Features
 
