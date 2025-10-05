@@ -50,6 +50,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Run tests
+        run: npm test
+
+      - name: Copy lib to docs
+        run: mkdir -p docs/lib && cp lib/apon.js docs/lib/apon.js
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
