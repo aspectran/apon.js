@@ -1,0 +1,33 @@
+# GitHub Actions workflow for publishing apon.js to npm
+# This workflow runs when a new release is created on GitHub.
+
+name: Publish to npm
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  publish-to-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org/' # Use the official npm registry
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Publish to npm
+        run: npm publish
+        env:
+          # Use the secret token you configured in the repository settings
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
