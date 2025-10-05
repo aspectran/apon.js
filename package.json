@@ -1,0 +1,26 @@
+{
+  "name": "apon",
+  "version": "1.0.0",
+  "description": "A lightweight, zero-dependency JavaScript library for handling APON (Aspectran Parameters Object Notation).",
+  "main": "apon.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aspectran/apon.js.git"
+  },
+  "keywords": [
+    "apon",
+    "aspectran",
+    "parser",
+    "config",
+    "configuration"
+  ],
+  "author": "The Aspectran Project",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/aspectran/apon.js/issues"
+  },
+  "homepage": "https://github.com/aspectran/apon.js#readme"
+}
