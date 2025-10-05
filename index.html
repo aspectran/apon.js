@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APON.js Demo</title>
+    <script src="apon.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 2em; }
+        h1, h2 { color: #333; }
+        pre { background-color: #f4f4f4; padding: 1em; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
+        #output { border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+
+    <h1>APON.js Demo</h1>
+
+    <h2>1. Parsing APON String to JavaScript Object</h2>
+    <p>The following APON string is parsed using <code>APON.parse()</code> and the resulting object is logged to the browser console.</p>
+    <h3>Original APON String:</h3>
+    <pre id="apon-string">
+# Server Configuration Example
+server: {
+  name: MyServer
+  port(int): 8080
+  features: [
+    HTTP2
+    SSL
+    "Web Sockets"
+  ]
+  admin: {
+    name: "John Doe"
+    email: john.doe@example.com
+  }
+}
+description(text): (
+  |This is a multi-line text.
+  |It demonstrates the text block feature of APON.
+)
+    </pre>
+
+    <h2>2. Stringifying JavaScript Object to APON String</h2>
+    <p>A JavaScript object is converted to an APON string using <code>APON.stringify()</code> and displayed below.</p>
+    <h3>Generated APON String:</h3>
+    <pre id="output"></pre>
+
+    <script>
+        // --- 1. Parsing Demo ---
+        const aponString = document.getElementById('apon-string').textContent;
+
+        console.log("--- APON Parsing Demo ---");
+        try {
+            const parsedObject = APON.parse(aponString);
+            console.log("Successfully parsed APON string into object:", parsedObject);
+        } catch (e) {
+            console.error("Failed to parse APON string:", e.message);
+        }
+
+        // --- 2. Stringifying Demo ---
+        const jsObject = {
+            project: {
+                name: "APON.js Library",
+                version: "1.0.0",
+                stable: true,
+                authors: [
+                    "Gemini",
+                    "Aspectran Team"
+                ]
+            },
+            license: "Apache License 2.0",
+            notes: "This is a sample object.\nIt will be converted to a multi-line text block."
+        };
+
+        console.log("\n--- APON Stringifying Demo ---");
+        try {
+            const stringifiedApon = APON.stringify(jsObject, { indent: '  ' });
+            document.getElementById('output').textContent = stringifiedApon;
+            console.log("Successfully stringified object into APON string:");
+            console.log(stringifiedApon);
+        } catch (e) {
+            console.error("Failed to stringify object:", e.message);
+        }
+    </script>
+
+</body>
+</html>
