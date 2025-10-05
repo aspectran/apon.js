@@ -1,5 +1,7 @@
 /*.iml
-/*.ipr
-/*.iws
 /.idea
-/_site
+
+node_modules
+package-lock.json
+yarn.lock
+.DS_Store
