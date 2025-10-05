@@ -4,7 +4,7 @@
   "description": "A lightweight, zero-dependency JavaScript library for handling APON (Aspectran Parameters Object Notation).",
   "main": "lib/apon.js",
   "scripts": {
-    "test": "jest"
+    "test": "npx jest"
   },
   "repository": {
     "type": "git",
