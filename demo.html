@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APON.js Interactive Demo</title>
+    <script src="apon.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 1rem 2rem; color: #333; background-color: #f9f9f9; }
+        h1, h2 { color: #111; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem;}
+        .container { display: flex; gap: 2rem; max-width: 1200px; margin: 0 auto; }
+        .column { flex: 1; display: flex; flex-direction: column; }
+        textarea, pre { width: 100%; min-height: 400px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; padding: 1rem; font-family: monospace; font-size: 14px; line-height: 1.5; }
+        textarea { resize: vertical; }
+        pre { background-color: #fff; white-space: pre-wrap; word-wrap: break-word; }
+        button { font-size: 1rem; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; background-color: #007bff; color: white; cursor: pointer; margin-top: 1rem; align-self: flex-start; }
+        button:hover { background-color: #0056b3; }
+        .error { color: #d93025; margin-top: 1rem; }
+        h4.error-title { margin-bottom: -0.5rem; color: #d93025; }
+    </style>
+</head>
+<body>
+
+    <h1>APON.js Interactive Demo</h1>
+    <p>Edit the APON text in the left box and click "Parse" to see the resulting JavaScript object. Edit the JSON in the right box and click "Stringify" to see the APON output.</p>
+
+    <div class="container">
+        <div class="column">
+            <h2>APON Input</h2>
+            <textarea id="apon-input"># Edit this APON text
+server: {
+  name: MyServer
+  port(int): 8080
+  features: [
+    HTTP2
+    SSL
+    "Web Sockets"
+  ]
+}
+
+description(text): (
+  |This is a multi-line text block.
+  |Feel free to edit and test.
+)
+</textarea>
+            <button onclick="runParse()">Parse to JS Object &raquo;</button>
+            <h4 class="error-title">Parse Error</h4>
+            <pre id="parse-error" class="error"></pre>
+        </div>
+        <div class="column">
+            <h2>JS Object / JSON Output</h2>
+            <textarea id="json-output">{
+  "hello": "world",
+  "version": 1,
+  "settings": {
+    "enabled": true,
+    "modes": [
+      "admin",
+      "user"
+    ]
+  }
+}</textarea>
+            <button onclick="runStringify()"> &laquo; Stringify to APON</button>
+            <h4 class="error-title">Stringify Error</h4>
+            <pre id="stringify-error" class="error"></pre>
+        </div>
+    </div>
+
+    <script>
+        const aponInput = document.getElementById('apon-input');
+        const jsonOutput = document.getElementById('json-output');
+        const parseError = document.getElementById('parse-error');
+        const stringifyError = document.getElementById('stringify-error');
+
+        function runParse() {
+            parseError.textContent = '';
+            try {
+                const parsed = APON.parse(aponInput.value);
+                // Use 2 spaces for JSON indentation for readability
+                jsonOutput.value = JSON.stringify(parsed, null, 2);
+            } catch (e) {
+                parseError.textContent = e.message;
+            }
+        }
+
+        function runStringify() {
+            stringifyError.textContent = '';
+            try {
+                const obj = JSON.parse(jsonOutput.value);
+                aponInput.value = APON.stringify(obj, { indent: '  ' });
+            } catch (e) {
+                stringifyError.textContent = e.message;
+            }
+        }
+
+        // Initial parse on load
+        runParse();
+    </script>
+
+</body>
+</html>
