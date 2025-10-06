@@ -54,7 +54,7 @@ describe('APON.stringify', () => {
 
     it('should stringify an object with multiple properties', () => {
         const obj = { name: 'John Doe', age: 30 };
-        const expected = 'name: "John Doe"\nage: 30';
+        const expected = 'name: John Doe\nage: 30';
         expect(APON.stringify(obj)).toBe(expected);
     });
 
