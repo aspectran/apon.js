@@ -1,33 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APON.js Interactive Demo</title>
+    <link rel="stylesheet" type="text/css" href="https://assets.aspectran.com/bootstrap@5.3.8/css/aspectran.css?v=20251006a"/>
     <script src="lib/apon.js"></script>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; padding: 1rem 2rem; color: #333; background-color: #f9f9f9; }
-        h1, h2 { color: #111; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem;}
-        .container { display: flex; gap: 2rem; max-width: 1200px; margin: 0 auto; }
-        .column { flex: 1; display: flex; flex-direction: column; }
-        textarea, pre { width: 100%; min-height: 400px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; padding: 1rem; font-family: monospace; font-size: 14px; line-height: 1.5; text-wrap: nowrap; }
-        textarea { resize: vertical; }
-        pre { background-color: #fff; white-space: pre-wrap; word-wrap: break-word; }
-        button { font-size: 1rem; padding: 0.75rem 1.5rem; border: none; border-radius: 6px; background-color: #007bff; color: white; cursor: pointer; margin-top: 1rem; align-self: flex-start; }
-        button:hover { background-color: #0056b3; }
-        .error { color: #d93025; margin-top: 1rem; }
-        h4.error-title { margin-bottom: -0.5rem; color: #d93025; }
+        /* Ensure textareas fill the card body */
+        .card-body .form-control {
+            flex-grow: 1;
+            resize: none; /* Disable manual resize for a cleaner look */
+        }
+        /* Adjust textarea height and prevent text wrapping */
+        .card-body textarea.form-control {
+            min-height: 450px;
+            white-space: pre;
+            overflow-x: auto;
+        }
     </style>
 </head>
 <body>
 
-    <h1>APON.js Interactive Demo</h1>
-    <p>Edit the APON text in the left box and click "Parse" to see the resulting JavaScript object. Edit the JSON in the right box and click "Stringify" to see the APON output.</p>
+<main class="container mt-4">
+    <div class="text-center mb-4">
+        <h1>APON.js Interactive Demo</h1>
+        <p class="lead">This tool allows you to interactively convert between APON and JavaScript Objects.</p>
+    </div>
 
-    <div class="container">
-        <div class="column">
-            <h2>APON Input</h2>
-            <textarea id="apon-input"># Edit this APON text
+    <div class="row g-4">
+        <!-- APON Input Column -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">APON Input</h5>
+                    <p class="card-text text-muted small">&raquo; Edit the APON text and click <strong>Parse to JS Object</strong>.</p>
+                    <div class="mb-3 flex-grow-1 d-flex">
+                        <textarea id="apon-input" class="form-control font-monospace"># Edit this APON text
 server: {
   name: MyServer
   port(int): 8080
@@ -42,13 +51,21 @@ description(text): (
   |Feel free to edit and test.
 )
 </textarea>
-            <button onclick="runParse()">Parse to JS Object &raquo;</button>
-            <h4 class="error-title">Parse Error</h4>
-            <pre id="parse-error" class="error"></pre>
+                    </div>
+                    <button class="btn btn-primary" onclick="runParse()">Parse to JS Object &raquo;</button>
+                    <div id="parse-error" class="alert alert-danger mt-3" role="alert" style="display: none;"></div>
+                </div>
+            </div>
         </div>
-        <div class="column">
-            <h2>JS Object / JSON Output</h2>
-            <textarea id="json-output">{
+
+        <!-- JSON Output Column -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">JS Object / JSON Output</h5>
+                    <p class="card-text text-muted small">&raquo; Edit the JSON and click <strong>Stringify to APON</strong>.</p>
+                    <div class="mb-3 flex-grow-1 d-flex">
+                        <textarea id="json-output" class="form-control font-monospace">{
   "hello": "world",
   "version": 1,
   "settings": {
@@ -59,42 +76,51 @@ description(text): (
     ]
   }
 }</textarea>
-            <button onclick="runStringify()"> &laquo; Stringify to APON</button>
-            <h4 class="error-title">Stringify Error</h4>
-            <pre id="stringify-error" class="error"></pre>
+                    </div>
+                    <button class="btn btn-secondary" onclick="runStringify()">&laquo; Stringify to APON</button>
+                    <div id="stringify-error" class="alert alert-danger mt-3" role="alert" style="display: none;"></div>
+                </div>
+            </div>
         </div>
     </div>
+</main>
 
-    <script>
-        const aponInput = document.getElementById('apon-input');
-        const jsonOutput = document.getElementById('json-output');
-        const parseError = document.getElementById('parse-error');
-        const stringifyError = document.getElementById('stringify-error');
+<footer class="container text-center text-muted mt-5 pb-4">
+    <p>&copy; 2008-2025 The Aspectran Project.<br>APON.js is licensed under the Apache License, Version 2.0.</p>
+</footer>
 
-        function runParse() {
-            parseError.textContent = '';
-            try {
-                const parsed = APON.parse(aponInput.value);
-                // Use 2 spaces for JSON indentation for readability
-                jsonOutput.value = JSON.stringify(parsed, null, 2);
-            } catch (e) {
-                parseError.textContent = e.message;
-            }
+<script>
+    const aponInput = document.getElementById('apon-input');
+    const jsonOutput = document.getElementById('json-output');
+    const parseError = document.getElementById('parse-error');
+    const stringifyError = document.getElementById('stringify-error');
+
+    function runParse() {
+        parseError.style.display = 'none';
+        try {
+            const parsed = APON.parse(aponInput.value);
+            // Use 2 spaces for JSON indentation for readability
+            jsonOutput.value = JSON.stringify(parsed, null, 2);
+        } catch (e) {
+            parseError.textContent = e.message;
+            parseError.style.display = 'block';
         }
+    }
 
-        function runStringify() {
-            stringifyError.textContent = '';
-            try {
-                const obj = JSON.parse(jsonOutput.value);
-                aponInput.value = APON.stringify(obj, { indent: '  ' });
-            } catch (e) {
-                stringifyError.textContent = e.message;
-            }
+    function runStringify() {
+        stringifyError.style.display = 'none';
+        try {
+            const obj = JSON.parse(jsonOutput.value);
+            aponInput.value = APON.stringify(obj, { indent: '  ' });
+        } catch (e) {
+            stringifyError.textContent = e.message;
+            stringifyError.style.display = 'block';
         }
+    }
 
-        // Initial parse on load
-        runParse();
-    </script>
+    // Initial parse on load
+    runParse();
+</script>
 
 </body>
 </html>
