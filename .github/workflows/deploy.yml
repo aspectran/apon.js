@@ -1,7 +1,7 @@
 # GitHub Actions workflow for apon.js
 # This workflow runs tests and deploys the demo page to GitHub Pages.
 
-name: Deploy Demo to GitHub Pages
+name: Build, Test and Deploy
 
 on:
   # Runs on pushes targeting the default branch
@@ -25,7 +25,8 @@ concurrency:
 
 jobs:
   # Build and test job
-  build-and-test:
+  build:
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -36,33 +37,25 @@ jobs:
           node-version: 20
           cache: 'npm'
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Run tests
         run: npm test
+      - name: Prepare for deployment
+        run: mkdir -p docs/lib && cp lib/apon.js docs/lib/apon.js
+      - name: Upload artifact for deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './docs'
 
   # Deployment job
   deploy:
-    needs: build-and-test # This job runs only if the build-and-test job succeeds
+    name: Deploy to GitHub Pages
+    needs: build # This job runs only if the build job succeeds
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Run tests
-        run: npm test
-
-      - name: Copy lib to docs
-        run: mkdir -p docs/lib && cp lib/apon.js docs/lib/apon.js
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload the /docs directory
-          path: './docs'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
