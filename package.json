@@ -1,6 +1,6 @@
 {
   "name": "apon",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A lightweight, zero-dependency JavaScript library for handling APON (Aspectran Parameters Object Notation).",
   "main": "lib/apon.js",
   "scripts": {

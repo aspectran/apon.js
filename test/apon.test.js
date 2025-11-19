@@ -183,4 +183,3 @@ describe('APON.stringify', () => {
         expect(() => APON.stringify(null)).toThrow('APON.stringify input must be an object or an array.');
     });
 });
-
