@@ -10,24 +10,22 @@ This library is designed to bring the readability and convenience of APON to the
 
 ## Features
 
-- **Parse APON**: Convert any valid APON string into a standard JavaScript object.
-- **Stringify Objects**: Convert JavaScript objects into clean, readable APON strings.
+- **Parse APON**: Convert any valid APON string into a standard JavaScript object. Supports `SINGLE_LINE` and `COMPACT` styles as well as multi-line `PRETTY` format.
+- **Stringify Objects**: Convert JavaScript objects into clean, readable APON strings with multiple output styles.
 - **Zero Dependencies**: Written in plain JavaScript (ES6) for maximum compatibility.
-- **APON Spec Compliant**: Accurately handles comments, nested structures, arrays, multi-line text, and automatic quoting based on the official Java implementation.
+- **APON Spec Compliant**: Accurately handles inline comments, nested structures, arrays, multi-line text, and automatic quoting based on the official Java implementation.
 - **Lightweight**: A single file with a small footprint, perfect for web applications.
 
 ## Installation
-
-*This library is not yet published to npm. Once published, you will be able to install it via:*
 
 ```bash
 npm install apon
 ```
 
-For now, you can include `apon.js` directly in your HTML file:
+For web environments, you can include `lib/apon.js` directly in your HTML file:
 
 ```html
-<script src="apon.js"></script>
+<script src="lib/apon.js"></script>
 ```
 
 ## API
@@ -42,32 +40,22 @@ Parses an APON string, constructing the JavaScript value or object described by 
 **Example:**
 
 ```javascript
-const aponText = `
-# User profile
-user: {
-  name: "John Doe"
-  age(int): 30
-  active: true
-  roles: [
-    Admin
-    Editor
-  ]
-}
-`;
-
+// Supports PRETTY, SINGLE_LINE, and COMPACT styles
+const aponText = 'name: John Doe, age: 30 # inline comment';
 const userObject = APON.parse(aponText);
 
 console.log(userObject);
-// { user: { name: 'John Doe', age: 30, active: true, roles: [ 'Admin', 'Editor' ] } }
+// { name: 'John Doe', age: 30 }
 ```
 
 ### `APON.stringify(obj, [options])`
 
-Converts a JavaScript object into an APON formatted string.
+Converts a JavaScript value to an APON formatted string.
 
-- **`obj`**: `object` - The object to convert. The top-level value must be a non-array object.
+- **`obj`**: `object` - The value to convert. Supports objects and arrays.
 - **`options`** (optional): `object` or `number` - An object that contains options, or the number of spaces to use for indentation.
-  - **`indent`**: `string` - The string to use for indentation (e.g., `'  '` or `'	'`). Defaults to `'  '`.
+  - **`indent`**: `string` - The string to use for indentation. Defaults to `'  '`.
+  - **`style`**: `string` - The output style: `'PRETTY'`, `'SINGLE_LINE'`, or `'COMPACT'`. Defaults to `'PRETTY'`.
 
 **Example:**
 
@@ -81,21 +69,16 @@ const myObject = {
   debugMode: false
 };
 
-// Stringify with an indent of 2 spaces
-const aponString = APON.stringify(myObject, { indent: '  ' });
+// Stringify in PRETTY style (default)
+console.log(APON.stringify(myObject));
 
-console.log(aponString);
-/*
-database: {
-  host: localhost
-  port: 5432
-  users: [
-    admin
-    readonly
-  ]
-}
-debugMode: false
-*/
+// Stringify in SINGLE_LINE style
+console.log(APON.stringify(myObject, { style: 'SINGLE_LINE' }));
+// database: { host: localhost, port: 5432, users: [ admin, readonly ] }, debugMode: false
+
+// Stringify in COMPACT style
+console.log(APON.stringify(myObject, { style: 'COMPACT' }));
+// database:{host:localhost,port:5432,users:[admin,readonly]},debugMode:false
 ```
 
 ## License

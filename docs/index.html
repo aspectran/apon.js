@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APON.js Interactive Demo</title>
-    <link rel="stylesheet" type="text/css" href="https://assets.aspectran.com/bootstrap@5.3.8/css/aspectran.css?v=20251017"/>
+    <link rel="stylesheet" type="text/css" href="https://assets.aspectran.com/bootstrap@5.3.8/css/aspectran.css"/>
     <script src="lib/apon.js"></script>
     <style>
         /* Ensure textareas fill the card body */
@@ -77,6 +77,14 @@ description(text): (
   }
 }</textarea>
                     </div>
+                    <div class="mb-3">
+                        <label for="apon-style" class="form-label small text-muted">Output Style:</label>
+                        <select id="apon-style" class="form-select form-select-sm">
+                            <option value="PRETTY" selected>PRETTY</option>
+                            <option value="SINGLE_LINE">SINGLE_LINE</option>
+                            <option value="COMPACT">COMPACT</option>
+                        </select>
+                    </div>
                     <button class="btn btn-secondary" onclick="runStringify()">&laquo; Stringify to APON</button>
                     <div id="stringify-error" class="alert alert-danger mt-3" role="alert" style="display: none;"></div>
                 </div>
@@ -111,7 +119,8 @@ description(text): (
         stringifyError.style.display = 'none';
         try {
             const obj = JSON.parse(jsonOutput.value);
-            aponInput.value = APON.stringify(obj, { indent: '  ' });
+            const style = document.getElementById('apon-style').value;
+            aponInput.value = APON.stringify(obj, { indent: '  ', style: style });
         } catch (e) {
             stringifyError.textContent = e.message;
             stringifyError.style.display = 'block';

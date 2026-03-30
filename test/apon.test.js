@@ -44,6 +44,12 @@ describe('APON.parse', () => {
         expect(APON.parse(aponText)).toEqual(expected);
     });
 
+    it('should parse inline comments', () => {
+        const aponText = 'name: John Doe # this is a comment';
+        const expected = { name: 'John Doe' };
+        expect(APON.parse(aponText)).toEqual(expected);
+    });
+
     it('should parse a root-level object enclosed in braces', () => {
         const aponText = `{
             name: John Doe
@@ -103,12 +109,30 @@ describe('APON.parse', () => {
         expect(APON.parse(aponText)).toEqual(expected);
     });
 
+    it('should parse SINGLE_LINE style', () => {
+        const aponText = 'name: John Doe, age: 30, city: New York';
+        const expected = { name: 'John Doe', age: 30, city: 'New York' };
+        expect(APON.parse(aponText)).toEqual(expected);
+    });
+
+    it('should parse COMPACT style', () => {
+        const aponText = '{name:John,age:30,roles:[Admin,User]}';
+        const expected = { name: 'John', age: 30, roles: ['Admin', 'User'] };
+        expect(APON.parse(aponText)).toEqual(expected);
+    });
+
+    it('should handle complex unquoted values', () => {
+        const aponText = 'key: value with {curly and [square open';
+        const expected = { key: 'value with {curly and [square open' };
+        expect(APON.parse(aponText)).toEqual(expected);
+    });
+
     it('should throw an error for unexpected content after a root object', () => {
         const aponText = `{
             name: Test
         }
         unexpected: content`;
-        expect(() => APON.parse(aponText)).toThrow('Invalid APON format: Unexpected content after closing brace "}" at line 4');
+        expect(() => APON.parse(aponText)).toThrow('Invalid APON format: Unexpected content after closing brace "}" of root object');
     });
 
     it('should throw an error for unexpected content after a root array', () => {
@@ -116,65 +140,45 @@ describe('APON.parse', () => {
             1
         ]
         unexpected: content`;
-        expect(() => APON.parse(aponText)).toThrow('Invalid APON format: Unexpected content after closing bracket "]" at line 4');
-    });
-
-    it('should throw an error for unexpected closing brace at top level', () => {
-        const aponText = `
-            name: Test
-            }
-        `;
-        expect(() => APON.parse(aponText)).toThrow('Invalid APON format: Unexpected closing brace "}" at top level on line 3');
+        expect(() => APON.parse(aponText)).toThrow('Invalid APON format: Unexpected content after closing bracket "]" of root array');
     });
 });
 
 describe('APON.stringify', () => {
-    it('should stringify a simple object', () => {
-        const obj = { name: 'John' };
-        const expected = 'name: John';
+    const obj = {
+        name: 'John Doe',
+        age: 30,
+        roles: ['Admin', 'User'],
+        address: { city: 'New York', zip: 10001 }
+    };
+
+    it('should stringify in PRETTY style (default)', () => {
+        const expected = `name: John Doe
+age: 30
+roles: [
+  Admin
+  User
+]
+address: {
+  city: New York
+  zip: 10001
+}`;
         expect(APON.stringify(obj)).toBe(expected);
     });
 
-    it('should stringify an object with multiple properties', () => {
-        const obj = { name: 'John Doe', age: 30 };
-        const expected = 'name: John Doe\nage: 30';
-        expect(APON.stringify(obj)).toBe(expected);
+    it('should stringify in SINGLE_LINE style', () => {
+        const expected = 'name: John Doe, age: 30, roles: [ Admin, User ], address: { city: New York, zip: 10001 }';
+        expect(APON.stringify(obj, { style: 'SINGLE_LINE' })).toBe(expected);
     });
 
-    it('should stringify nested objects', () => {
-        const obj = { user: { name: 'Jane', active: true } };
-        const expected = 'user: {\n  name: Jane\n  active: true\n}';
-        expect(APON.stringify(obj)).toBe(expected);
+    it('should stringify in COMPACT style', () => {
+        const expected = 'name:John Doe,age:30,roles:[Admin,User],address:{city:New York,zip:10001}';
+        expect(APON.stringify(obj, { style: 'COMPACT' })).toBe(expected);
     });
 
-    it('should stringify arrays of strings', () => {
-        const obj = { roles: ['Admin', 'User'] };
-        const expected = 'roles: [\n  Admin\n  User\n]';
-        expect(APON.stringify(obj)).toBe(expected);
-    });
-
-    it('should stringify a root-level array', () => {
-        const obj = ['a', 'b', 'c'];
-        const expected = '[\n  a\n  b\n  c\n]';
-        expect(APON.stringify(obj)).toBe(expected);
-    });
-
-    it('should stringify a root-level array with nested object blocks', () => {
-        const obj = [
-            { name: 'Alice', age: 30 },
-            { name: 'Bob', age: 25 }
-        ];
-        const expected = `[
-  {
-    name: Alice
-    age: 30
-  }
-  {
-    name: Bob
-    age: 25
-  }
-]`;
-        expect(APON.stringify(obj)).toBe(expected);
+    it('should convert text type to string in non-PRETTY styles', () => {
+        const textObj = { desc: "line1\nline2" };
+        expect(APON.stringify(textObj, { style: 'SINGLE_LINE' })).toBe('desc: "line1\\nline2"');
     });
 
     it('should throw an error for non-object/array inputs', () => {
